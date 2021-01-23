@@ -8,81 +8,97 @@ import net.md_5.bungee.api.ChatColor;
 
 public class ColorHandler {
 
-	// Declare and set the Pattern
-	private static final Pattern pattern = Pattern.compile("(?<!\\\\)(#[a-fA-F0-9]{6})");
+    // Declare and set the Pattern
+    private static final Pattern pattern = Pattern.compile("(?<!\\\\)(#[a-fA-F0-9]{6})");
 
-	// Translate a RGB color value to a Hex value
-	public static String rgbToHex(int red, int green, int blue) {
-		return String.format("#%02X%02X%02X", red, green, blue);
-	}
+    // Translate a RGB color value to a Hex value
+    public static String rgbToHex(int red, int green, int blue) {
+        return String.format("#%02X%02X%02X", red, green, blue);
+    }
 
-	// Translate a Hex color value to a RGB value
-	public static Color hexToRGB(String hex) {
-		return Color.decode(hex);
-	}
+    // Translate a RGB color value to a Hex value
+    public static String rgbToHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+    }
 
-	// Format a message with hex colors in it, to a colored message
-	public static String format(String message) {
-		Matcher matcher = pattern.matcher(message);
-		while (matcher.find()) {
-			String color = message.substring(matcher.start(), matcher.end());
-			message = message.replace(color, "" + ChatColor.of(color));
-			matcher = pattern.matcher(message);
-		}
-		return message;
-	}
+    // Translate a Hex color value to a RGB value
+    public static Color hexToRGB(String hex) {
+        return Color.decode(hex);
+    }
 
-	// Fade two colors using Hex
-	public static Color[] fade2ColorsHex(String startFadeHex, String endFadeHex, int steps) {
+    // Format a message with hex colors in it, to a colored message
+    public static String format(String message) {
+        Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            String color = message.substring(matcher.start(), matcher.end());
+            message = message.replace(color, "" + ChatColor.of(color));
+            matcher = pattern.matcher(message);
+        }
+        return message;
+    }
 
-		// Declare & Set Variables
-		Color[] colors = new Color[steps];
-		Color start = hexToRGB(startFadeHex);
-		Color end = hexToRGB(endFadeHex);
+    // Fade two colors using Hex
+    public static Color[] fade2ColorsHex(String startFadeHex, String endFadeHex, int steps) {
 
-		steps--;
+        // Declare & Set Variables
+        Color[] colors = new Color[steps];
+        Color start = hexToRGB(startFadeHex);
+        Color end = hexToRGB(endFadeHex);
 
-		// Set the color multiplier per step
-		double rStep = (double) (end.getRed() - start.getRed()) / (double) steps;
-		double gStep = (double) (end.getGreen() - start.getGreen()) / (double) steps;
-		double bStep = (double) (end.getBlue() - start.getBlue()) / (double) steps;
+        steps--;
 
-		// Calculate color and adding color to colors
-		for (int step = 0; step <= steps; step++) {
-			int red = (int) (start.getRed() + rStep * step);
-			int green = (int) (start.getGreen() + gStep * step);
-			int blue = (int) (start.getBlue() + bStep * step);
+        // Set the color multiplier per step
+        double rStep = (double) (end.getRed() - start.getRed()) / (double) steps;
+        double gStep = (double) (end.getGreen() - start.getGreen()) / (double) steps;
+        double bStep = (double) (end.getBlue() - start.getBlue()) / (double) steps;
 
-			// Add color
-			colors[step] = new Color(red, green, blue);
-		}
-		// Return array colors
-		return colors;
-	}
+        // Calculate color and adding color to colors
+        for (int step = 0; step <= steps; step++) {
+            int red = (int) (start.getRed() + rStep * step);
+            int green = (int) (start.getGreen() + gStep * step);
+            int blue = (int) (start.getBlue() + bStep * step);
 
-	// Fade two colors using RGB
-	public static Color[] fade2ColorsRGB(Color start, Color end, int steps) {
+            // Add color
+            colors[step] = new Color(red, green, blue);
+        }
+        // Return array colors
+        return colors;
+    }
 
-		// Declare & Set Variables
-		Color[] colors = new Color[steps];
+    // Fade two colors using RGB
+    public static Color[] fade2ColorsRGB(Color start, Color end, int steps) {
 
-		steps--;
+        // Declare & Set Variables
+        Color[] colors = new Color[steps];
 
-		// Set the color multiplier per step
-		double rStep = (double) (end.getRed() - start.getRed()) / (double) steps;
-		double gStep = (double) (end.getGreen() - start.getGreen()) / (double) steps;
-		double bStep = (double) (end.getBlue() - start.getBlue()) / (double) steps;
+        steps--;
 
-		// Calculate color and adding color to colors
-		for (int step = 0; step <= steps; step++) {
-			int red = (int) (start.getRed() + rStep * step);
-			int green = (int) (start.getGreen() + gStep * step);
-			int blue = (int) (start.getBlue() + bStep * step);
+        // Set the color multiplier per step
+        double rStep = (double) (end.getRed() - start.getRed()) / (double) steps;
+        double gStep = (double) (end.getGreen() - start.getGreen()) / (double) steps;
+        double bStep = (double) (end.getBlue() - start.getBlue()) / (double) steps;
 
-			// Add color
-			colors[step] = new Color(red, green, blue);
-		}
-		// Return array colors
-		return colors;
-	}
+        // Calculate color and adding color to colors
+        for (int step = 0; step <= steps; step++) {
+            int red = (int) (start.getRed() + rStep * step);
+            int green = (int) (start.getGreen() + gStep * step);
+            int blue = (int) (start.getBlue() + bStep * step);
+
+            // Add color
+            colors[step] = new Color(red, green, blue);
+        }
+        // Return array colors
+        return colors;
+    }
+
+    public static String fade2Colors(Color start, Color end, String message) {
+        Color[] colors = fade2ColorsRGB(start, end, message.length());
+        String msg = "";
+        int i = 0;
+        for (Color color : colors) {
+            msg += rgbToHex(color.getRed(), color.getGreen(), color.getBlue()) + message.charAt(i);
+            i++;
+        }
+        return msg;
+    }
 }
